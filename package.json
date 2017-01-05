@@ -1,7 +1,7 @@
 {
-  "name": "globe-geom",
-  "version": "0.1.0",
-  "description": "mathematics for globes ",
+  "name": "et-globe-math",
+  "version": "0.1.1",
+  "description": "maths library for globes of variable radius",
   "main": "core/index.js",
   "author": "Chris Kelly",
   "license": "MIT",
