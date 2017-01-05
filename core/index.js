@@ -10,7 +10,6 @@ class ETGlobeMath {
 	this._LatLon = G.LatLonSpherical;
     }
 
-
     // direction is inferred (p1 -> p2)
     lengthenByKm(pFrom, pTo, byKm) {
 	this._assertLatLon([pFrom, pTo]);
@@ -31,8 +30,29 @@ class ETGlobeMath {
     }
 
     // distance between 2 points on this sphere
+    distanceAlongTrack(pList) {
+	if (!Array.isArray(pList)) {
+	    throw new ERR('expected-array', 'Track must be defined as array of points');
+	}
+	return pList.reduce((p, n) => {
+	    this._assertLatLon(n, 'in distance along track.');
+	    if (p[0]) {
+		this._assertLatLon(n, 'distance along track has previous data.');
+		p[1] += p[0].distanceTo(n, this.radius);
+	    }
+	    p[0] = n;
+	    return p;
+	}, [null, 0])[1];
+    }
+
+    // distance from any point to some create circle
+    crossTrackDistance(from, pStart, pEnd) {
+	this._assertLatLon([from, pStart, pEnd]);
+	return from.crossTrackDistanceTo(pStart, pEnd, this.radius);
+    }
+    
     distance(p1, p2) {
-	this._assertLatLon([p1,p2]);
+	this._assertLatLon([p1, p2]);	    
 	return p1.distanceTo(p2, this.radius);
     }
 
@@ -95,10 +115,16 @@ class ETGlobeMath {
         return centroid;
     }
 
-    _assertLatLon (pts) {
-	pts.forEach(p => {
-	    if (!p.distanceTo) throw new Error('Not a valid point: ' + $(p1));
-	});
+    _assertLatLon (pts, msg) {
+	if (Array.isArray(pts)) {
+	    pts.forEach(p => {
+		if (!p.distanceTo) ERR('invalid-point', `Not a valid point: ${p}. ${msg||''}`);
+	    });
+	}
+	else {
+	    if (!pts.distanceTo) ERR('invalid-point', `Not a valid point: ${pts}. ${msg||''}`);
+	}
+	
     }
 }
 

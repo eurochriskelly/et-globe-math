@@ -6,7 +6,6 @@ const LatLon = ETGlobeMath.LatLon;
 describe ('geometry on spheres of variable sizes', () => {
 
     describe ('smoke tests', () => {
-
 	it ('runs', function () {});
 
 	// temporary test
@@ -25,40 +24,63 @@ describe ('geometry on spheres of variable sizes', () => {
 	});
     });
 
-    describe ('real examples', () => {
+    describe ('real examples for validation', () => {
 	const EARTH_RADIUS = 6370.0;
 	const MOON_RADIUS  = 1737.0;
+	const pLondon   = new LatLon(51.5, 0.12);
+	const pParis    = new LatLon(48.85, 2.35);
+	const pNewYork  = new LatLon(40.712, 74.0);
+	const pApollo11 = new LatLon(0.68, 23.43);
+	const pApollo14 = new LatLon(-3.67, -17.46);
+
+	const gmEarth = new ETGlobeMath(EARTH_RADIUS);
+	const gmMoon  = new ETGlobeMath(MOON_RADIUS);
 	
 	it ('calculates distances on earth', done => {
-	    const gmath = new ETGlobeMath(EARTH_RADIUS);
-	    
-	    var pLondon = new LatLon(51.5, 0.12);
-	    var pParis = new LatLon(48.85, 2.35);
-
-	    const dist = gmath.distance(pLondon, pParis);
+	    const dist = gmEarth.distance(pLondon, pParis);
 
 	    // actual distance: approx 340km
 	    expect(dist).toBeGreaterThan(330);
 	    expect(dist).toBeLessThan(350);
+	    done();
+	});
 
+	it ('calculates length of track on earth', done => {
+	    // to paris and back again.
+	    const dist = gmEarth.distanceAlongTrack([pLondon, pParis, pLondon]);
+
+	    // actual distance: approx 670km
+	    expect(dist).toBeGreaterThan(660);
+	    expect(dist).toBeLessThan(700);
 	    done();
 	});
 
 	it ('calculates distances on the moon', done => {
-	    const gmath = new ETGlobeMath(MOON_RADIUS);
-	    
-	    var pApollo11 = new LatLon(0.68, 23.43);
-	    var pApollo14= new LatLon(-3.67, -17.46);
-
-	    const dist = gmath.distance(pApollo11, pApollo14);
+	    const dist = gmMoon.distance(pApollo11, pApollo14);
 	    expect(dist).toBeGreaterThan(1240);
 	    expect(dist).toBeLessThan(1250);
+	    done();
+	});
 
+	it('finds distance to great circle connecting cities', done => {
+	    const dist = gmEarth.crossTrackDistance(pLondon, pNewYork, pParis);
+	    // actual distance: close to London -> Paris
+	    expect(dist).toBeGreaterThan(330);
+	    expect(dist).toBeLessThan(350);
+	    done();
+	});
+
+	it('finds distance to great circle connecting cities', done => {
+	    const dist = gmEarth.crossTrackDistance(pNewYork, pParis, pLondon);
+
+	    // actual distance: 5435km
+	    expect(dist).toBeGreaterThan(5430);
+	    expect(dist).toBeLessThan(5450);
 	    done();
 	});
     });
 
-    describe ('shape handling on sphere surface', () => {
+    describe ('shape handling on globe surface', () => {
 
 	it ('finds centroid of shape', done => {
 	    console.log(Object.keys(gm));
