@@ -1,0 +1,18 @@
+{
+  "name": "globe-geom",
+  "version": "0.1.0",
+  "description": "mathematics for globes ",
+  "main": "core/index.js",
+  "author": "Chris Kelly",
+  "license": "MIT",
+  "scripts" : {
+    "test" : "jest",
+    "test-watch" : "~/.yarn-config/global/node_modules/.bin/jest --watch"
+  },
+  "Dependencies": {
+    "geodesy": "^1.1.1"
+  },
+  "devDependencies": {
+    "jest": "^18.1.0"
+  }
+}
